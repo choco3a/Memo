@@ -63,7 +63,7 @@ function saveCurrentMemo() {
   memo.text = text.value;
 
   saveMemos();
-  rendermemo();
+  rendermemo(search.value);
 };
 
 function showMemo(memo: Memo) {
@@ -81,10 +81,19 @@ function showMemo(memo: Memo) {
 };
 
 
-function rendermemo() {
+function rendermemo(query ='') {
   list.innerHTML = '';
 
-  memos.forEach((memo) => {
+  const keyword = query.trim().toLowerCase();
+
+  const filterMemos = memos.filter((memo) => {
+    return(
+      memo.title.toLowerCase().includes(keyword) ||
+      memo.text.toLowerCase().includes(keyword)
+    );
+  })
+
+  filterMemos.forEach((memo) => {
     const li = document.createElement('li');
     const selectememoButton = document.createElement('button');
     const deleteButton = document.createElement('button');
@@ -111,7 +120,7 @@ function rendermemo() {
 
       memos.splice(index, 1);
       saveMemos();
-      rendermemo();
+      rendermemo(search.value);
 
       if(wasSelected){
         if(memos.length > 0) {
@@ -151,6 +160,7 @@ function createMemo() {
 
 addmemo.addEventListener('click', () => {
   titlememo.classList.remove('hide');
+  search.value = '';
   createMemo();
 });
 
@@ -175,3 +185,9 @@ title.addEventListener('input',saveCurrentMemo);
     createMemo();
     title.focus();
   };
+
+  search.addEventListener('input', () => {
+    rendermemo(search.value);
+  });
+
+  
